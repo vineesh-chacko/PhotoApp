@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+
+    <div class="row">
+        <table id="photoAlbum" class="table table-bordered" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Photo Title</th>
+                    <th>Album Name</th>
+                    <th>Thumb Nailurl</th>
+                    <th>Url</th>
+                </tr>
+            </thead>
+
+        </table>
+    </div>
+</div>
+
+<div id="myDialog">
+    <img id="myImage" />
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $(function () {
+                $("#myDialog").dialog({
+                    autoOpen: false,
+                    resizable: false,
+                    width: "auto",
+                    buttons: {
+                        OK: function () { $(this).dialog("close"); }
+                    },
+                    title: "Image Loader",
+                    position: {
+                        my: "center",
+                        at: "center",
+                    }
+                });
+            });
+
+            $('#photoAlbum').on('click', 'input', function () {
+                var data = table.row($(this).parents('tr')).data();
+                $("#myImage").attr("src", data["url"]);
+                $("#myDialog").dialog("open");
+            });
+
+            var table = $("#photoAlbum").DataTable({
+                "ajax": {
+                    "url": "/api/photosapi",
+                    "type": 'GET',
+                    "datatype": "json",
+                    "dataSrc": ""
+                },
+                "columns": [
+
+                    {
+                        "data": "id",
+                        "visible": false
+                    },
+                    { "data": "albumName" },
+                    { "data": "photoTitle" },
+                    {
+                        "data": "thumbnailUrl",
+                        "render": getImgeThumb
+                    },
+                    {
+                        
+                        "data": "url",
+                        "visible": false
+                    },
+                ],
+
+            });
+
+            function getImgeThumb(data, type, full, meta) {
+                var popup = '<input name="thumbNail" class="clsLoadImage" id="btnThumbNail" type="image" style="width:80%"; src=' + data + '/>';
+                return popup;
+            }
+        });
+
+    </script>
+}
